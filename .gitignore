@@ -1,33 +1,25 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+node_modules
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+# OS
+.DS_Store
+Thumbs.db
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
 
-### VS Code ###
-.vscode/
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+# SQLite
+*.db
