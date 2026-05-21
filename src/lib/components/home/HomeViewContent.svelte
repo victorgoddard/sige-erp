@@ -1,15 +1,6 @@
 <script lang="ts">
  import { Package } from 'lucide-svelte';
-  import type { PurchaseOrder } from '$lib/types/purchase-order';
 
-  let { orders = [] }: { orders?: PurchaseOrder[] } = $props();
-
-  function currency(value: number) {
-    return new Intl.NumberFormat('pt-BR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
-  }
 </script>
 
 <div class="table-wrapper">

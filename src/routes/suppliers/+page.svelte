@@ -9,8 +9,8 @@
 
   import { page } from '$app/stores';
 
-  import PurchaseOrderForm from '$lib/components/form/PurchaseOrderForm.svelte';
-  import PurchaseOrdersTable from '$lib/components/purchase-orders/PurchaseOrdersTable.svelte';
+  import SuppliersForm from '$lib/components/form/SuppliersForm.svelte';
+  import SuppliersTable from '$lib/components/suppliers/SuppliersTable.svelte';
 
   import { purchaseOrders } from '$lib/mock/purchase-order';
 
@@ -125,6 +125,17 @@
       <div class="page-header">
         <h2>Fornecedores</h2>
       </div>
+
+      <div class="form-card">
+        <SuppliersForm
+          //{suppliers}
+          //{products}
+        />
+      </div>
+
+      <SuppliersTable
+        //suppliers={suppliers}
+      />
 
     </section>
   </main>
