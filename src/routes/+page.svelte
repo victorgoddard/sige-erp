@@ -254,6 +254,8 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    justify-content: center;
+    align-items: center;
   }
 
   .page-header h2 {
@@ -267,6 +269,12 @@
     border-radius: 18px;
     border: 1px solid #e5e7eb;
     padding: 2rem;
+    margin-top: 6rem;
+    width: 30rem;
+    height: 10rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   @media (max-width: 1200px) {

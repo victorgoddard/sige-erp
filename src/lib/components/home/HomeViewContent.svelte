@@ -1,6 +1,5 @@
 <script lang="ts">
-  //import StatusBadge from './StatusBadge.svelte';
-
+ import { Package } from 'lucide-svelte';
   import type { PurchaseOrder } from '$lib/types/purchase-order';
 
   let { orders = [] }: { orders?: PurchaseOrder[] } = $props();
@@ -14,37 +13,8 @@
 </script>
 
 <div class="table-wrapper">
-  <table>
-    <thead>
-      <tr>
-        <th>Nº da Ordem</th>
-        <th>Data</th>
-        <th>Fornecedor</th>
-        <th>Produto</th>
-        <th>Quantidade</th>
-        <th>Valor Unitário (R$)</th>
-        <th>Valor Total (R$)</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      {#each orders as order}
-        <tr>
-          <td>{order.orderNumber}</td>
-          <td>{order.date}</td>
-          <td>{order.supplier.name}</td>
-          <td>{order.product.name}</td>
-          <td>{order.quantity}</td>
-          <td>{currency(order.unitPrice)}</td>
-          <td>{currency(order.totalPrice)}</td>
-          <td>
-            <!-- <StatusBadge status={order.status} /> -->
-          </td>
-        </tr>
-      {/each}
-    </tbody>
-  </table>
+  <Package class="icon" size={64} />
+  <p class="label">Selecione um módulo para continuar</p>
 </div>
 
 <style>
@@ -52,34 +22,25 @@
     background: white;
     border-radius: 18px;
     overflow: hidden;
-    border: 1px solid #e5e7eb;
+
+    text-align: center;
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
+  .label{
+    display: block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    font-weight: 500;
+
+    font-family: Inter, sans-serif;
   }
 
-  thead {
-    background: linear-gradient(90deg, #06131e 0%, #081d2b 100%);
+  .icon{
+    display: block;
+    color: #9ca3af;
+    margin: 0 auto 0.5rem auto;
+
   }
 
-  th {
-    color: white;
-    text-align: left;
-    padding: 1.4rem 1.5rem;
-    font-size: 0.95rem;
-    font-weight: 700;
-  }
-
-  td {
-    padding: 1.5rem;
-    border-bottom: 1px solid #edf2f7;
-    color: #374151;
-    font-size: 0.95rem;
-  }
-
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
 </style>
