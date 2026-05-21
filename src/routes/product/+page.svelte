@@ -93,7 +93,6 @@
       {#each menuItems as item}
         {@const Icon = item.icon}
         <a
-          //class:active={item.active}
           class="menu-item"
           class:active={$page.url.pathname === item.href}
           href={item.href} >
@@ -126,17 +125,7 @@
       <div class="page-header">
         <h2>Produto</h2>
       </div>
-
-      <div class="form-card">
-        <PurchaseOrderForm
-          {suppliers}
-          {products}
-        />
-      </div>
-
-      <PurchaseOrdersTable
-        orders={purchaseOrders}
-      />
+      
     </section>
   </main>
 </div>
