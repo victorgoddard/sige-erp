@@ -7,6 +7,8 @@
     Wallet
   } from '@lucide/svelte';
 
+  import { page } from '$app/stores';
+
   import PurchaseOrderForm from '$lib/components/form/PurchaseOrderForm.svelte';
   import PurchaseOrdersTable from '$lib/components/purchase-orders/PurchaseOrdersTable.svelte';
 
@@ -47,24 +49,28 @@
   const menuItems = [
     {
       label: 'Produto',
-      icon: Package
+      icon: Package,
+      href: '/product'
     },
     {
       label: 'Fornecedores',
       icon: Users,
-      active: true
+      href: '/suppliers'
     },
     {
       label: 'Ordens de Compra',
-      icon: FileText
+      icon: FileText,
+      href: '/purchase-orders'
     },
     {
       label: 'Fluxo de Caixa',
-      icon: Wallet
+      icon: Wallet,
+      href: '/cash-flow'
     },
     {
       label: 'Relatórios',
-      icon: PieChart
+      icon: PieChart,
+      href: '/charts'
     }
   ];
 </script>
@@ -86,15 +92,15 @@
     <nav class="menu">
       {#each menuItems as item}
         {@const Icon = item.icon}
-        <button
-          class:active={item.active}
+        <a
+          //class:active={item.active}
           class="menu-item"
-          type="button"
-        >
+          class:active={$page.url.pathname === item.href}
+          href={item.href} >
           <Icon size={22} />
 
           <span>{item.label}</span>
-        </button>
+        </a>
       {/each}
     </nav>
   </aside>
@@ -201,6 +207,8 @@
     cursor: pointer;
     font-size: 1rem;
     transition: all 0.2s;
+
+    text-decoration: none;
   }
 
   .menu-item:hover {
