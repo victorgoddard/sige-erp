@@ -7,7 +7,10 @@
     Wallet
   } from '@lucide/svelte';
 
-  import HomeViewContent from '$lib/components/home/HomeViewContent.svelte';
+  import PurchaseOrderForm from '$lib/components/form/PurchaseOrderForm.svelte';
+  import PurchaseOrdersTable from '$lib/components/purchase-orders/PurchaseOrdersTable.svelte';
+
+  import { purchaseOrders } from '$lib/mock/purchase-order';
 
   import type { Product, Supplier } from '$lib/types/purchase-order';
 
@@ -60,13 +63,14 @@
     },
     {
       label: 'Relatórios',
-      icon: PieChart
+      icon: PieChart,
+      active: true
     }
   ];
 </script>
 
 <svelte:head>
-  <title>Produto</title>
+  <title>Relatórios</title>
 </svelte:head>
 
 <div class="layout">
@@ -83,7 +87,7 @@
       {#each menuItems as item}
         {@const Icon = item.icon}
         <button
-          //class:active={item.active}
+          class:active={item.active}
           class="menu-item"
           type="button"
         >
@@ -100,8 +104,7 @@
       <div class="topbar-overlay"></div>
 
       <div class="topbar-content">
-        <!--<h1>Produto</h1>-->
-        <h1></h1>
+        <h1>Relatórios</h1>
 
         <div class="user-area">
           <div class="avatar">
@@ -114,11 +117,20 @@
     </header>
 
     <section class="page-content">
-
-      <div class="form-card">
-        <HomeViewContent/>
+      <div class="page-header">
+        <h2>Relatórios</h2>
       </div>
 
+      <div class="form-card">
+        <PurchaseOrderForm
+          {suppliers}
+          {products}
+        />
+      </div>
+
+      <PurchaseOrdersTable
+        orders={purchaseOrders}
+      />
     </section>
   </main>
 </div>
