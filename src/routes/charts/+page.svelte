@@ -1,292 +1,310 @@
 <script lang="ts">
+  import Breadcrumbs from '$lib/components/Breadcrumbs.svelte';
   import {
-    Package,
-    Users,
-    FileText,
-    PieChart,
-    Wallet
-  } from '@lucide/svelte';
-
-  import { page } from '$app/stores';
-
-  import PurchaseOrderForm from '$lib/components/form/PurchaseOrderForm.svelte';
-  import PurchaseOrdersTable from '$lib/components/purchase-orders/PurchaseOrdersTable.svelte';
-
-  import { purchaseOrders } from '$lib/mock/purchase-order';
-
-  import type { Product, Supplier } from '$lib/types/purchase-order';
-
-  const suppliers: Supplier[] = [
-    {
-      id: '1',
-      name: 'Vogel Tecnologia'
-    },
-    {
-      id: '2',
-      name: 'Constrular Materiais'
-    },
-    {
-      id: '3',
-      name: 'EletroMais'
-    }
-  ];
-
-  const products: Product[] = [
-    {
-      id: '1',
-      name: 'Parafuso 4x40'
-    },
-    {
-      id: '2',
-      name: 'Bucha 6mm'
-    },
-    {
-      id: '3',
-      name: 'Cabo Flexível 2,5mm'
-    }
-  ];
-
-  const menuItems = [
-    {
-      label: 'Produto',
-      icon: Package,
-      href: '/product'
-    },
-    {
-      label: 'Fornecedores',
-      icon: Users,
-      href: '/suppliers'
-    },
-    {
-      label: 'Ordens de Compra',
-      icon: FileText,
-      href: '/purchase-orders'
-    },
-    {
-      label: 'Fluxo de Caixa',
-      icon: Wallet,
-      href: '/cash-flow'
-    },
-    {
-      label: 'Relatórios',
-      icon: PieChart,
-      href: '/charts'
-    }
-  ];
+    chartLegend,
+    getBarColor,
+    hasGroupSpacing,
+    reportBreadcrumbs,
+    reportCards
+  } from '$lib/components/form/ChartsForm.svelte';
+  import {
+    financialMetric,
+    lowStockBars,
+    openOrdersBars
+  } from '$lib/mock/charts';
 </script>
 
 <svelte:head>
   <title>Relatórios</title>
 </svelte:head>
 
-<div class="layout">
-  <aside class="sidebar">
-    <div class="company-section">
-      <div class="company-avatar">
-        A
-      </div>
+<Breadcrumbs
+  items={reportBreadcrumbs}
+/>
 
-      <span>Andar 1001</span>
-    </div>
+<section class="reports-page">
+  <div class="reports-container">
+    <div class="reports-content">
+      <div class="charts-column">
+        <article class="report-card chart-card">
+          <h2>{reportCards.openOrdersTitle}</h2>
 
-    <nav class="menu">
-      {#each menuItems as item}
-        {@const Icon = item.icon}
-        <a
-          class="menu-item"
-          class:active={$page.url.pathname === item.href}
-          href={item.href} >
-          <Icon size={22} />
+          <div class="bar-chart" aria-label="Total de ordens de compra em aberto">
+            <div class="chart-lines" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
 
-          <span>{item.label}</span>
-        </a>
-      {/each}
-    </nav>
-  </aside>
-
-  <main class="content">
-    <header class="topbar">
-      <div class="topbar-overlay"></div>
-
-      <div class="topbar-content">
-        <h1>Relatórios</h1>
-
-        <div class="user-area">
-          <div class="avatar">
-            J
+            <div class="bars">
+              {#each openOrdersBars as bar, index}
+                <span
+                  class="bar"
+                  class:group-spacing={hasGroupSpacing(index)}
+                  style={`height: ${bar}%; background: ${getBarColor(index)}`}
+                ></span>
+              {/each}
+            </div>
           </div>
 
-          <span>João Cardoso</span>
+          <div class="chart-legend">
+            {#each chartLegend as item}
+              <div class="legend-item">
+                <span style={`background: ${item.color}`}></span>
+                <small>{item.label}</small>
+              </div>
+            {/each}
+          </div>
+        </article>
+
+        <article class="report-card chart-card">
+          <h2>{reportCards.lowStockTitle}</h2>
+
+          <div class="bar-chart" aria-label="Quantidade de produtos abaixo do estoque mínimo">
+            <div class="chart-lines" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div class="bars">
+              {#each lowStockBars as bar, index}
+                <span
+                  class="bar"
+                  class:group-spacing={hasGroupSpacing(index)}
+                  style={`height: ${bar}%; background: ${getBarColor(index)}`}
+                ></span>
+              {/each}
+            </div>
+          </div>
+
+          <div class="chart-legend">
+            {#each chartLegend as item}
+              <div class="legend-item">
+                <span style={`background: ${item.color}`}></span>
+                <small>{item.label}</small>
+              </div>
+            {/each}
+          </div>
+        </article>
+      </div>
+
+      <aside class="report-card metric-card">
+        <div class="metric-icon" aria-hidden="true">
+          <span></span>
+          <span></span>
         </div>
-      </div>
-    </header>
 
-    <section class="page-content">
-      <div class="page-header">
-        <h2>Relatórios</h2>
-      </div>
-
-    </section>
-  </main>
-</div>
+        <h2>{reportCards.balanceTitle}</h2>
+        <strong>{financialMetric.amount}</strong>
+        <p>{financialMetric.variation}</p>
+      </aside>
+    </div>
+  </div>
+</section>
 
 <style>
-  :global(body) {
-    margin: 0;
-    background: #f5f6fa;
-    font-family: Inter, sans-serif;
+  .reports-page {
+    width: 100%;
+    padding: 8rem 2rem 2rem;
   }
 
-  .layout {
+  .reports-container {
+    width: 100%;
     display: flex;
-    min-height: 100vh;
   }
 
-  .sidebar {
-    width: 260px;
-    background: linear-gradient(180deg, #071826 0%, #03111d 100%);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    border-right: 4px solid #00b4b6;
-  }
-
-  .company-section {
+  .reports-content {
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 2rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .company-avatar,
-  .avatar {
-    width: 54px;
-    height: 54px;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.15);
-    font-weight: 700;
-    font-size: 1.1rem;
-    border: 2px solid rgba(255, 255, 255, 0.35);
-  }
-
-  .company-section span {
-    font-size: 1.35rem;
-    font-weight: 500;
-  }
-
-  .menu {
-    display: flex;
-    flex-direction: column;
-    padding: 2rem 0;
-  }
-
-  .menu-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    height: 60px;
-    padding: 0 2rem;
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.82);
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.2s;
-
-    text-decoration: none;
-  }
-
-  .menu-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-  }
-
-  .menu-item.active {
-    color: #00d2d3;
-    background: rgba(0, 210, 211, 0.08);
-  }
-
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .topbar {
-    position: relative;
-    height: 96px;
-    background: linear-gradient(90deg, #041420 0%, #071f32 45%, #00b4b6 100%);
-    overflow: hidden;
-  }
-
-  .topbar-overlay {
-    position: absolute;
-    right: 22%;
-    top: -40px;
-    width: 320px;
-    height: 180px;
-    background: rgba(255, 255, 255, 0.08);
-    transform: rotate(35deg);
-  }
-
-  .topbar-content {
-    position: relative;
-    z-index: 2;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-  }
-
-  .topbar h1 {
-    color: white;
-    font-size: 2.2rem;
-    margin: 0;
-    font-weight: 700;
-  }
-
-  .user-area {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 500;
-  }
-
-  .page-content {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
     gap: 2rem;
   }
 
-  .page-header h2 {
-    margin: 0;
-    color: #1f2937;
-    font-size: 2rem;
+  .charts-column {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
   }
 
-  .form-card {
-    background: white;
-    border-radius: 18px;
+  .report-card {
+    background: #f8fafc;
     border: 1px solid #e5e7eb;
-    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   }
 
-  @media (max-width: 1200px) {
-    .layout {
-      flex-direction: column;
+  .chart-card {
+    width: 100%;
+    padding: 1rem 1.25rem 0.9rem;
+  }
+
+  .metric-card {
+    flex: 0 0 260px;
+    min-height: 8.7rem;
+    padding: 1rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chart-card h2,
+  .metric-card h2 {
+    margin: 0 0 0.75rem;
+    text-align: center;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    color: #111827;
+    font-weight: 800;
+  }
+
+  .bar-chart {
+    position: relative;
+    width: 100%;
+    height: 9rem;
+    padding: 0.25rem 0.25rem 0;
+    overflow: hidden;
+  }
+
+  .chart-lines {
+    position: absolute;
+    inset: 0.25rem 0.25rem 0.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+
+  .chart-lines span {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: #e2e8f0;
+  }
+
+  .bars {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
+
+  .bar {
+    flex: 1;
+    min-width: 0.5rem;
+    border-radius: 2px 2px 0 0;
+  }
+
+  .bar.group-spacing {
+    margin-right: 1.25rem;
+  }
+
+  .bar.group-spacing:last-child {
+    margin-right: 0;
+  }
+
+  .chart-legend {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 65%;
+    margin-top: 0.75rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .legend-item span {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+  }
+
+  .legend-item small {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #64748b;
+  }
+
+  .metric-icon {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.15rem;
+    height: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #10bdb7;
+  }
+
+  .metric-icon span {
+    display: block;
+    width: 0.3rem;
+    background: currentColor;
+    border-radius: 999px;
+  }
+
+  .metric-icon span:first-child {
+    height: 0.55rem;
+  }
+
+  .metric-icon span:last-child {
+    height: 1rem;
+  }
+
+  .metric-card h2 {
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+  }
+
+  .metric-card strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  .metric-card p {
+    margin: 0.3rem 0 0;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #14b8b6;
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .reports-page {
+      padding: 1rem;
     }
 
-    .sidebar {
+    .reports-content {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .metric-card {
       width: 100%;
-      border-right: none;
-      border-bottom: 4px solid #00b4b6;
+      flex: initial;
+    }
+
+    .bar-chart {
+      height: 6rem;
+    }
+
+    .chart-legend {
+      width: 100%;
+    }
+
+    .bar.group-spacing {
+      margin-right: 0.5rem;
     }
   }
 </style>
