@@ -1,9 +1,14 @@
 import type { Handle } from '@sveltejs/kit';
 import { building } from '$app/environment';
-import { auth } from '$lib/server/auth';
+import { env } from '$env/dynamic/private';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 
 const handleBetterAuth: Handle = async ({ event, resolve }) => {
+	if (env.SKIP_AUTH_FOR_DEV === 'true') {
+		return resolve(event);
+	}
+
+	const { auth } = await import('$lib/server/auth');
 	const session = await auth.api.getSession({ headers: event.request.headers });
 
 	if (session) {

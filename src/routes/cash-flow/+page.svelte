@@ -1,292 +1,382 @@
 <script lang="ts">
-  import {
-    Package,
-    Users,
-    FileText,
-    PieChart,
-    Wallet
-  } from '@lucide/svelte';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/state';
+  import { BriefcaseBusiness } from '@lucide/svelte';
+  import type { PageProps } from './$types';
 
-  import { page } from '$app/stores';
+  let { data }: PageProps = $props();
 
-  import PurchaseOrderForm from '$lib/components/form/PurchaseOrderForm.svelte';
-  import PurchaseOrdersTable from '$lib/components/purchase-orders/PurchaseOrdersTable.svelte';
+  let startDate = $state('');
+  let endDate = $state('');
+  let loadedFilterKey = $state('');
+  let isLoading = $state(false);
 
-  import { purchaseOrders } from '$lib/mock/purchase-order';
+  const rows = $derived(data.rows);
+  const totalPeriod = $derived(data.totalCents / 100);
 
-  import type { Product, Supplier } from '$lib/types/purchase-order';
+  $effect(() => {
+    const nextFilterKey = `${data.filters.startDate}|${data.filters.endDate}`;
 
-  const suppliers: Supplier[] = [
-    {
-      id: '1',
-      name: 'Vogel Tecnologia'
-    },
-    {
-      id: '2',
-      name: 'Constrular Materiais'
-    },
-    {
-      id: '3',
-      name: 'EletroMais'
+    if (loadedFilterKey !== nextFilterKey) {
+      startDate = data.filters.startDate;
+      endDate = data.filters.endDate;
+      loadedFilterKey = nextFilterKey;
     }
-  ];
+  });
 
-  const products: Product[] = [
-    {
-      id: '1',
-      name: 'Parafuso 4x40'
-    },
-    {
-      id: '2',
-      name: 'Bucha 6mm'
-    },
-    {
-      id: '3',
-      name: 'Cabo Flexível 2,5mm'
-    }
-  ];
+  async function applyFilter() {
+    isLoading = true;
 
-  const menuItems = [
-    {
-      label: 'Produto',
-      icon: Package,
-      href: '/product'
-    },
-    {
-      label: 'Fornecedores',
-      icon: Users,
-      href: '/suppliers'
-    },
-    {
-      label: 'Ordens de Compra',
-      icon: FileText,
-      href: '/purchase-orders'
-    },
-    {
-      label: 'Fluxo de Caixa',
-      icon: Wallet,
-      href: '/cash-flow'
-    },
-    {
-      label: 'Relatórios',
-      icon: PieChart,
-      href: '/charts'
-    }
-  ];
+    const next = new URL(page.url);
+    next.searchParams.set('startDate', startDate);
+    next.searchParams.set('endDate', endDate);
+
+    await goto(next.toString(), {
+      keepFocus: true,
+      noScroll: true,
+      replaceState: true
+    });
+
+    isLoading = false;
+  }
+
+  function formatDate(date: string) {
+    const [year, month, day] = date.split('-');
+    return `${day}/${month}/${year}`;
+  }
+
+  function formatCurrency(value: number) {
+    return new Intl.NumberFormat('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  }
 </script>
 
 <svelte:head>
   <title>Fluxo de Caixa</title>
 </svelte:head>
 
-<div class="layout">
-  <aside class="sidebar">
-    <div class="company-section">
-      <div class="company-avatar">
-        A
-      </div>
+<section class="cash-flow-content">
+  <section class="filter-card" aria-label="Filtro por período">
+    <strong>Período</strong>
 
-      <span>Andar 1001</span>
+    <div class="period-controls">
+      <label for="startDate">
+        <span>Data inicial</span>
+        <input id="startDate" type="date" bind:value={startDate} />
+      </label>
+
+      <span class="range-label">até</span>
+
+      <label for="endDate">
+        <span>Data final</span>
+        <input id="endDate" type="date" bind:value={endDate} />
+      </label>
+
+      <button type="button" onclick={applyFilter} disabled={isLoading}>
+        {isLoading ? 'Filtrando...' : 'Filtrar'}
+      </button>
+    </div>
+  </section>
+
+  <section class="table-card" aria-label="Lançamentos de fluxo de caixa">
+    <table>
+      <thead>
+        <tr>
+          <th>Data do lançamento</th>
+          <th>Descrição</th>
+          <th>Origem</th>
+          <th>Data prevista de pagamento</th>
+          <th>Valor (R$)</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {#each rows as row}
+          <tr>
+            <td>{formatDate(row.launchDate)}</td>
+            <td>{row.description}</td>
+            <td>{row.origin}</td>
+            <td>{formatDate(row.dueDate)}</td>
+            <td>{formatCurrency(row.value)}</td>
+            <td>
+              <span class={row.type === 'A Pagar' ? 'payable' : 'receivable'}>
+                {row.type}
+              </span>
+            </td>
+          </tr>
+        {:else}
+          <tr>
+            <td class="empty-state" colspan="6">
+              Nenhum lançamento encontrado para o período informado.
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="total-card" aria-label="Saldo total do período">
+    <div class="total-label">
+      <BriefcaseBusiness size={24} />
+      <strong>Saldo total do período:</strong>
     </div>
 
-    <nav class="menu">
-      {#each menuItems as item}
-        {@const Icon = item.icon}
-        <a
-          class="menu-item"
-          class:active={$page.url.pathname === item.href}
-          href={item.href} >
-          <Icon size={22} />
-
-          <span>{item.label}</span>
-        </a>
-      {/each}
-    </nav>
-  </aside>
-
-  <main class="content">
-    <header class="topbar">
-      <div class="topbar-overlay"></div>
-
-      <div class="topbar-content">
-        <h1>Fluxo de Caixa</h1>
-
-        <div class="user-area">
-          <div class="avatar">
-            J
-          </div>
-
-          <span>João Cardoso</span>
-        </div>
-      </div>
-    </header>
-
-    <section class="page-content">
-      <div class="page-header">
-        <h2>Fluxo de Caixa</h2>
-      </div>
-
-    </section>
-  </main>
-</div>
+    <strong class="total-value">R$ {formatCurrency(totalPeriod)}</strong>
+  </section>
+</section>
 
 <style>
-  :global(body) {
-    margin: 0;
-    background: #f5f6fa;
-    font-family: Inter, sans-serif;
+  .cash-flow-content {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 1rem 1.35rem 2rem;
   }
 
-  .layout {
-    display: flex;
-    min-height: 100vh;
+  .filter-card,
+  .table-card,
+  .total-card {
+    box-sizing: border-box;
+    background: white;
+    border: 1px solid #dfe5eb;
+    border-radius: 8px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.04);
   }
 
-  .sidebar {
-    width: 260px;
-    background: linear-gradient(180deg, #071826 0%, #03111d 100%);
-    color: white;
+  .filter-card {
+    max-width: 640px;
+    padding: 1.15rem 1.45rem 1.35rem;
+  }
+
+  .filter-card > strong {
+    display: block;
+    margin-bottom: 0.7rem;
+    color: #172033;
+    font-size: 0.95rem;
+  }
+
+  .period-controls {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) auto minmax(180px, 1fr) 140px;
+    align-items: center;
+    gap: 1.1rem;
+  }
+
+  .period-controls label {
     display: flex;
     flex-direction: column;
-    border-right: 4px solid #00b4b6;
+    gap: 0.35rem;
   }
 
-  .company-section {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 2rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  .period-controls label span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
 
-  .company-avatar,
-  .avatar {
-    width: 54px;
-    height: 54px;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.15);
+  .period-controls input {
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    box-sizing: border-box;
+    border: 1px solid #d7dee7;
+    border-radius: 8px;
+    padding: 0 0.95rem;
+    color: #1f2937;
+    font: inherit;
+    font-size: 0.92rem;
+    outline: none;
+  }
+
+  .period-controls input:focus {
+    border-color: #00aaa8;
+    box-shadow: 0 0 0 3px rgba(0, 180, 182, 0.12);
+  }
+
+  .range-label {
+    align-self: center;
+    color: #1f2937;
+    font-size: 0.9rem;
     font-weight: 700;
-    font-size: 1.1rem;
-    border: 2px solid rgba(255, 255, 255, 0.35);
   }
 
-  .company-section span {
-    font-size: 1.35rem;
-    font-weight: 500;
-  }
-
-  .menu {
-    display: flex;
-    flex-direction: column;
-    padding: 2rem 0;
-  }
-
-  .menu-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    height: 60px;
-    padding: 0 2rem;
-    background: transparent;
+  .period-controls button {
+    width: 100%;
+    height: 46px;
     border: none;
-    color: rgba(255, 255, 255, 0.82);
+    border-radius: 8px;
+    background: linear-gradient(90deg, #00aaa8, #008f8d);
+    color: white;
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 800;
     cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.2s;
-
-    text-decoration: none;
+    box-shadow: 0 8px 16px rgba(0, 143, 141, 0.22);
   }
 
-  .menu-item:hover {
-    background: rgba(255, 255, 255, 0.06);
+  .period-controls button:disabled {
+    cursor: progress;
+    opacity: 0.75;
   }
 
-  .menu-item.active {
-    color: #00d2d3;
-    background: rgba(0, 210, 211, 0.08);
-  }
-
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .topbar {
-    position: relative;
-    height: 96px;
-    background: linear-gradient(90deg, #041420 0%, #071f32 45%, #00b4b6 100%);
+  .table-card {
+    margin-top: 1.55rem;
     overflow: hidden;
   }
 
-  .topbar-overlay {
-    position: absolute;
-    right: 22%;
-    top: -40px;
-    width: 320px;
-    height: 180px;
-    background: rgba(255, 255, 255, 0.08);
-    transform: rotate(35deg);
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
   }
 
-  .topbar-content {
-    position: relative;
-    z-index: 2;
-    height: 100%;
+  thead {
+    background: linear-gradient(180deg, #172833, #101d27);
+  }
+
+  th {
+    height: 48px;
+    padding: 0 0.65rem;
+    color: white;
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  td {
+    height: 60px;
+    padding: 0 0.65rem;
+    color: #253241;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #dfe5eb;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 15%;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 32%;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 11%;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 22%;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 10%;
+  }
+
+  th:nth-child(6),
+  td:nth-child(6) {
+    width: 10%;
+  }
+
+  .payable {
+    color: #e60000;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .receivable {
+    color: #057a55;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .empty-state {
+    height: 80px;
+    color: #64748b;
+    text-align: center;
+  }
+
+  .total-card {
+    min-height: 96px;
+    margin-top: 1.55rem;
+    padding: 0 2.5rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-  }
-
-  .topbar h1 {
-    color: white;
-    font-size: 2.2rem;
-    margin: 0;
-    font-weight: 700;
-  }
-
-  .user-area {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 500;
-  }
-
-  .page-content {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
+    justify-content: flex-end;
     gap: 2rem;
   }
 
-  .page-header h2 {
-    margin: 0;
-    color: #1f2937;
-    font-size: 2rem;
+  .total-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #172033;
   }
 
-  .form-card {
-    background: white;
-    border-radius: 18px;
-    border: 1px solid #e5e7eb;
-    padding: 2rem;
+  .total-label strong {
+    font-size: 1.25rem;
   }
 
-  @media (max-width: 1200px) {
-    .layout {
-      flex-direction: column;
+  .total-value {
+    color: #e60000;
+    font-size: 1.5rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1100px) {
+    .cash-flow-content {
+      padding: 1rem;
     }
 
-    .sidebar {
-      width: 100%;
-      border-right: none;
-      border-bottom: 4px solid #00b4b6;
+    .filter-card {
+      max-width: none;
+    }
+
+    .table-card {
+      overflow-x: auto;
+    }
+
+    table {
+      min-width: 980px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .period-controls {
+      grid-template-columns: 1fr;
+      gap: 0.85rem;
+    }
+
+    .range-label {
+      justify-self: center;
+      padding-top: 0;
+      text-align: center;
+    }
+
+    .total-card {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1.3rem;
+    }
+
+    .total-label strong {
+      font-size: 1.1rem;
     }
   }
 </style>
