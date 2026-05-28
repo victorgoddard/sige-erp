@@ -1,5 +1,4 @@
 <script lang="ts">
-  import './layout.css';
   import {
     Building2,
     ClipboardList,
@@ -11,8 +10,6 @@
   import { page } from '$app/stores';
 
   let { children } = $props();
-
-  const shellRoutes = new Set(['/', '/fornecedores', '/charts']);
 
   const menuItems = [
     {
@@ -41,70 +38,56 @@
       href: '/charts'
     }
   ];
-
-  const pageTitles: Record<string, string> = {
-    '/': 'SIGE ERP',
-    '/fornecedores': 'Fornecedores',
-    '/charts': 'Relatórios'
-  };
-
-  function currentTitle(pathname: string) {
-    return pageTitles[pathname] ?? 'SIGE ERP';
-  }
 </script>
 
-{#if shellRoutes.has($page.url.pathname)}
-  <div class="layout">
-    <header class="topbar">
-      <h1>{currentTitle($page.url.pathname)}</h1>
+<div class="layout">
+  <header class="topbar">
+    <h1>Fluxo de Caixa</h1>
 
-      <div class="topbar-cut"></div>
+    <div class="topbar-cut"></div>
 
-      <div class="user-area">
-        <div class="avatar">
-          J
-        </div>
-
-        <span>João Cardoso</span>
+    <div class="user-area">
+      <div class="avatar">
+        J
       </div>
-    </header>
 
-    <div class="workspace">
-      <aside class="sidebar">
-        <div class="company-section">
-          <div class="company-avatar">
-            <Building2 size={18} />
-          </div>
+      <span>João Cardoso</span>
+    </div>
+  </header>
 
-          <span>Andar 1001</span>
+  <div class="workspace">
+    <aside class="sidebar">
+      <div class="company-section">
+        <div class="company-avatar">
+          <Building2 size={18} />
         </div>
+
+        <span>Andar 1001</span>
+      </div>
 
         <nav class="side-menu" aria-label="Menu principal">
-          {#each menuItems as item}
-            {@const Icon = item.icon}
-            <a
+        {#each menuItems as item}
+          {@const Icon = item.icon}
+          <a
               class="side-menu-item"
-              class:active={$page.url.pathname === item.href}
-              href={item.href}
-            >
-              <Icon size={21} />
+            class:active={$page.url.pathname === item.href}
+            href={item.href}
+          >
+            <Icon size={21} />
 
-              <span>{item.label}</span>
-            </a>
-          {/each}
-        </nav>
-      </aside>
+            <span>{item.label}</span>
+          </a>
+        {/each}
+      </nav>
+    </aside>
 
-      <main class="content">
-        <section class="page-slot">
-          {@render children?.()}
-        </section>
-      </main>
-    </div>
+    <main class="content">
+      <section class="page-slot">
+        {@render children?.()}
+      </section>
+    </main>
   </div>
-{:else}
-  {@render children?.()}
-{/if}
+</div>
 
 <style>
   .layout {
@@ -237,10 +220,6 @@
   .content,
   .page-slot {
     min-width: 0;
-  }
-
-  .page-slot {
-    padding: 1rem 1.35rem 2rem;
   }
 
   @media (max-width: 1100px) {
