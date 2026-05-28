@@ -1,6 +1,5 @@
 <script lang="ts">
- import { Package } from 'lucide-svelte';
-
+  import { Package } from "lucide-svelte";
 </script>
 
 <div class="table-wrapper">
@@ -14,10 +13,18 @@
     border-radius: 18px;
     overflow: hidden;
 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
     text-align: center;
   }
 
-  .label{
+  .label {
     display: block;
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
@@ -27,11 +34,9 @@
     font-family: Inter, sans-serif;
   }
 
-  .icon{
+  .icon {
     display: block;
     color: #9ca3af;
     margin: 0 auto 0.5rem auto;
-
   }
-
 </style>
