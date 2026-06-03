@@ -106,24 +106,28 @@
 <style>
   .reports-page {
     width: 100%;
-    padding: 8rem 2rem 2rem;
+    padding: 2.8rem 2rem 2rem;
   }
 
   .reports-container {
     width: 100%;
+    max-width: 1050px;
+    margin: 0 auto;
     display: flex;
+    justify-content: center;
   }
 
   .reports-content {
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 2rem;
   }
 
   .charts-column {
-    flex: 1;
-    min-width: 0;
+    width: 100%;
+    max-width: 650px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -139,13 +143,13 @@
 
   .chart-card {
     width: 100%;
-    padding: 1rem 1.25rem 0.9rem;
+    padding: 1.25rem 1.35rem 1.1rem;
   }
 
   .metric-card {
-    flex: 0 0 260px;
-    min-height: 8.7rem;
-    padding: 1rem 0.8rem;
+    flex: 0 0 240px;
+    min-height: 10rem;
+    padding: 1.25rem 0.8rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -154,7 +158,7 @@
 
   .chart-card h2,
   .metric-card h2 {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.9rem;
     text-align: center;
     font-size: 0.85rem;
     line-height: 1.2;
@@ -165,7 +169,7 @@
   .bar-chart {
     position: relative;
     width: 100%;
-    height: 9rem;
+    height: 8.4rem;
     padding: 0.25rem 0.25rem 0;
     overflow: hidden;
   }
@@ -214,7 +218,7 @@
     align-items: center;
     justify-content: space-between;
     width: 65%;
-    margin-top: 0.75rem;
+    margin-top: 0.9rem;
   }
 
   .legend-item {
@@ -290,13 +294,17 @@
       align-items: stretch;
     }
 
+    .charts-column {
+      max-width: 100%;
+    }
+
     .metric-card {
       width: 100%;
       flex: initial;
     }
 
     .bar-chart {
-      height: 6rem;
+      height: 7rem;
     }
 
     .chart-legend {
