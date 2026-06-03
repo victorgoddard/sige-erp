@@ -10,7 +10,7 @@
   } from '@lucide/svelte';
   import { page } from '$app/stores';
 
-  let { children } = $props();
+  let { data, children } = $props();
 
   const shellRoutes = new Set(['/', '/fornecedores', '/charts']);
 
@@ -62,10 +62,10 @@
 
       <div class="user-area">
         <div class="avatar">
-          J
+          {data.userName[0].toUpperCase() || "U"}
         </div>
 
-        <span>João Cardoso</span>
+        <span>{data.userName || "Usuário"}</span>
       </div>
     </header>
 

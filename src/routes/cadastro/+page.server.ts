@@ -41,38 +41,66 @@ function verifyPassword(
 }
 
 export const actions: Actions = {
-  create: async ({ request }) => {
+  create: async ({request}) => {
     const formData = await request.formData();
 
     const email = formData.get("email")?.toString().trim();
     const password = formData.get("password")?.toString().trim();
+    const passwordConfirm = formData.get("confirmPassword")?.toString().trim();
     const name = formData.get("name")?.toString().trim();
 
     if (!name) {
       return fail(400, {
         success: false,
-        error: "O nome é obrigatório."
+        error: "O nome é obrigatório.",
+        name,
+        password,
+        passwordConfirm,
+        email,
       });
     }
 
     if (!email) {
       return fail(400, {
         success: false,
-        error: "O email é obrigatório."
+        error: "O email é obrigatório.",
+        name,
+        password,
+        passwordConfirm,
+        email,
       });
     }
 
     if (!emailRegex.test(email)) {
       return fail(400, {
         success: false,
-        error: "Email inválido."
+        error: "Email inválido.",
+        name,
+        password,
+        passwordConfirm,
+        email,
       });
     }
 
     if (!password) {
       return fail(400, {
         success: false,
-        error: "A senha é obrigatória."
+        error: "A senha é obrigatória.",
+        name,
+        password,
+        passwordConfirm,
+        email,
+      });
+    }
+
+    if (password !== passwordConfirm) {
+      return fail(400, {
+        success: false,
+        error: "As senhas não coincidem.",
+        name,
+        password,
+        passwordConfirm,
+        email,
       });
     }
 
@@ -85,7 +113,11 @@ export const actions: Actions = {
       if (existingUser.length > 0) {
         return fail(400, {
           success: false,
-          error: "Email já cadastrado."
+          error: "Email já cadastrado.",
+          name,
+          password,
+          passwordConfirm,
+          email,
         });
       }
 
@@ -105,14 +137,18 @@ export const actions: Actions = {
 
       return fail(500, {
         success: false,
-        error: "Erro interno ao salvar no banco."
+        error: "Erro interno ao salvar no banco.",
+        name,
+        password,
+        passwordConfirm,
+        email,
       });
     }
 
     throw redirect(303, "/login");
   },
 
-  update: async ({ request }) => {
+  update: async ({request}) => {
     const formData = await request.formData();
 
     const userId = formData.get("id")?.toString();
@@ -198,7 +234,7 @@ export const actions: Actions = {
     }
   },
 
-  delete: async ({ request }) => {
+  delete: async ({request}) => {
     const formData = await request.formData();
 
     const id = parseInt(
@@ -240,61 +276,5 @@ export const actions: Actions = {
       });
     }
   },
-
-  login: async ({ request }) => {
-    const formData = await request.formData();
-
-    const email = formData.get("email")?.toString().trim();
-    const password = formData.get("password")?.toString();
-
-    if (!email || !password) {
-      return fail(400, {
-        success: false,
-        error: "Email e senha são obrigatórios."
-      });
-    }
-
-    try {
-      const user = await db
-        .select()
-        .from(LoginTable)
-        .where(eq(LoginTable.email, email));
-
-      if (user.length === 0) {
-        return fail(401, {
-          success: false,
-          error: "Email ou senha inválidos."
-        });
-      }
-
-      const isValidPassword = verifyPassword(
-        password,
-        user[0].password
-      );
-
-      if (!isValidPassword) {
-        return fail(401, {
-          success: false,
-          error: "Email ou senha inválidos."
-        });
-      }
-
-      return {
-        success: true,
-        user: {
-          id: user[0].id,
-          email: user[0].email
-        }
-      };
-
-    } catch (error) {
-      console.error(error);
-
-      return fail(500, {
-        success: false,
-        error: "Erro interno ao realizar login."
-      });
-    }
-  }
 
 };

@@ -41,205 +41,8 @@ function verifyPassword(
 }
 
 export const actions: Actions = {
-  create: async ({ request }) => {
-    const formData = await request.formData();
 
-    const email = formData.get("email")?.toString().trim();
-    const password = formData.get("password")?.toString().trim();
-    const name = formData.get("name")?.toString().trim();
-
-    if (!name) {
-      return fail(400, {
-        success: false,
-        error: "O nome é obrigatório."
-      });
-    }
-
-    if (!email) {
-      return fail(400, {
-        success: false,
-        error: "O email é obrigatório."
-      });
-    }
-
-    if (!emailRegex.test(email)) {
-      return fail(400, {
-        success: false,
-        error: "Email inválido."
-      });
-    }
-
-    if (!password) {
-      return fail(400, {
-        success: false,
-        error: "A senha é obrigatória."
-      });
-    }
-
-    try {
-      const existingUser = await db
-        .select()
-        .from(LoginTable)
-        .where(eq(LoginTable.email, email));
-
-      if (existingUser.length > 0) {
-        return fail(400, {
-          success: false,
-          error: "Email já cadastrado."
-        });
-      }
-
-      const now = new Date();
-
-      await db.insert(LoginTable).values({
-        email,
-        name,
-        password: hashPassword(password),
-        createdAt: now,
-        updatedAt: now
-      });
-
-      return { success: true };
-    } catch (error) {
-      console.error(error);
-
-      return fail(500, {
-        success: false,
-        error: "Erro interno ao salvar no banco."
-      });
-    }
-  },
-
-  update: async ({ request }) => {
-    const formData = await request.formData();
-
-    const userId = formData.get("id")?.toString();
-    const email = formData.get("email")?.toString().trim();
-    const password = formData.get("password")?.toString().trim();
-    const name = formData.get("name")?.toString().trim();
-
-    if (!name) {
-      return fail(400, {
-        success: false,
-        error: "O nome é obrigatório."
-      });
-    }
-
-    if (!userId) {
-      return fail(400, {
-        success: false,
-        error: "ID não fornecido."
-      });
-    }
-
-    const id = parseInt(userId, 10);
-
-    if (Number.isNaN(id)) {
-      return fail(400, {
-        success: false,
-        error: "ID inválido."
-      });
-    }
-
-    if (!email) {
-      return fail(400, {
-        success: false,
-        error: "O email é obrigatório."
-      });
-    }
-
-    if (!emailRegex.test(email)) {
-      return fail(400, {
-        success: false,
-        error: "Email inválido."
-      });
-    }
-
-    if (!password) {
-      return fail(400, {
-        success: false,
-        error: "A senha é obrigatória."
-      });
-    }
-
-    try {
-      const user = await db
-        .select()
-        .from(LoginTable)
-        .where(eq(LoginTable.id, id));
-
-      if (user.length === 0) {
-        return fail(404, {
-          success: false,
-          error: "Usuário não encontrado."
-        });
-      }
-
-      await db
-        .update(LoginTable)
-        .set({
-          email,
-          name,
-          password: hashPassword(password),
-          updatedAt: new Date()
-        })
-        .where(eq(LoginTable.id, id));
-
-      return { success: true };
-    } catch (error) {
-      console.error(error);
-
-      return fail(500, {
-        success: false,
-        error: "Erro interno ao atualizar no banco."
-      });
-    }
-  },
-
-  delete: async ({ request }) => {
-    const formData = await request.formData();
-
-    const id = parseInt(
-      formData.get("id")?.toString() || "",
-      10
-    );
-
-    if (Number.isNaN(id)) {
-      return fail(400, {
-        success: false,
-        error: "ID inválido para exclusão."
-      });
-    }
-
-    try {
-      const user = await db
-        .select()
-        .from(LoginTable)
-        .where(eq(LoginTable.id, id));
-
-      if (user.length === 0) {
-        return fail(404, {
-          success: false,
-          error: "Usuário não encontrado."
-        });
-      }
-
-      await db
-        .delete(LoginTable)
-        .where(eq(LoginTable.id, id));
-
-      return { success: true };
-    } catch (error) {
-      console.error(error);
-
-      return fail(500, {
-        success: false,
-        error: "Erro ao deletar do banco."
-      });
-    }
-  },
-
-  login: async ({ request }) => {
+  login: async ({ request, cookies }) => {
     const formData = await request.formData();
 
     const email = formData.get("email")?.toString().trim();
@@ -248,7 +51,9 @@ export const actions: Actions = {
     if (!email || !password) {
       return fail(400, {
         success: false,
-        error: "Email e senha são obrigatórios."
+        error: "Email e senha são obrigatórios.",
+        email,
+        password
       });
     }
 
@@ -261,7 +66,9 @@ export const actions: Actions = {
       if (user.length === 0) {
         return fail(401, {
           success: false,
-          error: "Email ou senha inválidos."
+          error: "Email ou senha inválidos.",
+          email,
+          password
         });
       }
 
@@ -273,24 +80,27 @@ export const actions: Actions = {
       if (!isValidPassword) {
         return fail(401, {
           success: false,
-          error: "Email ou senha inválidos."
+          error: "Email ou senha inválidos.",
+          email,
+          password
         });
       }
 
-      /*return {
-        success: true,
-        user: {
-          id: user[0].id,
-          email: user[0].email
-        }
-      };*/
+      cookies.set("user_name", user[0].name, {
+        path: "/",
+        httpOnly: true,
+        sameSite: "strict",
+        maxAge: 60 * 60 * 24
+      });
 
     } catch (error) {
       console.error(error);
 
       return fail(500, {
         success: false,
-        error: "Erro interno ao realizar login."
+        error: "Erro interno ao realizar login.",
+        email,
+        password
       });
     }
 
