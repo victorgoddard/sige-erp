@@ -76,59 +76,25 @@
 </script>
 
 <svelte:head>
-  <title>Produto</title>
+  <title>Ordens de Compra</title>
 </svelte:head>
 
-<div class="layout">
-  <aside class="sidebar">
-    <div class="company-section">
-      <div class="company-avatar">
-        A
-      </div>
+<section class="page-content">
+  <div class="page-header">
+    <h2>Ordens de Compra</h2>
+  </div>
 
-      <span>Andar 1001</span>
-    </div>
+  <div class="form-card">
+    <PurchaseOrderForm
+      {suppliers}
+      {products}
+    />
+  </div>
 
-    <nav class="menu">
-      {#each menuItems as item}
-        {@const Icon = item.icon}
-        <a
-          class="menu-item"
-          class:active={$page.url.pathname === item.href}
-          href={item.href} >
-          <Icon size={22} />
-
-          <span>{item.label}</span>
-        </a>
-      {/each}
-    </nav>
-  </aside>
-
-  <main class="content">
-    <header class="topbar">
-      <div class="topbar-overlay"></div>
-
-      <div class="topbar-content">
-        <h1>Produto</h1>
-
-        <div class="user-area">
-          <div class="avatar">
-            J
-          </div>
-
-          <span>João Cardoso</span>
-        </div>
-      </div>
-    </header>
-
-    <section class="page-content">
-      <div class="page-header">
-        <h2>Produto</h2>
-      </div>
-      
-    </section>
-  </main>
-</div>
+  <PurchaseOrdersTable
+    orders={purchaseOrders}
+  />
+</section>
 
 <style>
   :global(body) {
