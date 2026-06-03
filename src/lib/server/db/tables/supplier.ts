@@ -5,6 +5,8 @@ export const supplierTable = sqliteTable("supplier", {
   id: integer({ mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
   active: integer("active", { mode: "boolean" }).default(true).notNull(),
+  telefone: text("telefone").notNull(),
+  condicaoPagamento: text("condicaoPagamento").notNull(),
 
   idUser: integer("idUser").notNull(),
   createdAt: integer("createdAt", { mode: "timestamp_ms" }).notNull(),
