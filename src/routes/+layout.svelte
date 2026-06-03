@@ -18,7 +18,7 @@
     {
       label: 'Produto',
       icon: Package,
-      href: '/product'
+      href: '/produto'
     },
     {
       label: 'Fornecedores',
@@ -28,17 +28,17 @@
     {
       label: 'Ordens de Compra',
       icon: ClipboardList,
-      href: '/purchase-orders'
+      href: '/ordemcompra'
     },
     {
       label: 'Fluxo de Caixa',
       icon: Wallet,
-      href: '/cash-flow'
+      href: '/fluxocaixa'
     },
     {
       label: 'Relatórios',
       icon: PieChart,
-      href: '/charts'
+      href: '/relatorios'
     }
   ];
 
@@ -53,7 +53,7 @@
   }
 </script>
 
-{#if shellRoutes.has($page.url.pathname)}
+<!-- {#if shellRoutes.has($page.url.pathname)} -->
   <div class="layout">
     <header class="topbar">
       <h1>{currentTitle($page.url.pathname)}</h1>
@@ -102,9 +102,9 @@
       </main>
     </div>
   </div>
-{:else}
+<!-- {:else}
   {@render children?.()}
-{/if}
+{/if} -->
 
 <style>
   .layout {

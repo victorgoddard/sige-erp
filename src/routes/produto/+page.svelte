@@ -55,7 +55,7 @@
     {
       label: 'Fornecedores',
       icon: Users,
-      href: '/suppliers'
+      href: '/fornecedores'
     },
     {
       label: 'Ordens de Compra',
@@ -79,56 +79,7 @@
   <title>Produto</title>
 </svelte:head>
 
-<div class="layout">
-  <aside class="sidebar">
-    <div class="company-section">
-      <div class="company-avatar">
-        A
-      </div>
-
-      <span>Andar 1001</span>
-    </div>
-
-    <nav class="menu">
-      {#each menuItems as item}
-        {@const Icon = item.icon}
-        <a
-          class="menu-item"
-          class:active={$page.url.pathname === item.href}
-          href={item.href} >
-          <Icon size={22} />
-
-          <span>{item.label}</span>
-        </a>
-      {/each}
-    </nav>
-  </aside>
-
-  <main class="content">
-    <header class="topbar">
-      <div class="topbar-overlay"></div>
-
-      <div class="topbar-content">
-        <h1>Produto</h1>
-
-        <div class="user-area">
-          <div class="avatar">
-            J
-          </div>
-
-          <span>João Cardoso</span>
-        </div>
-      </div>
-    </header>
-
-    <section class="page-content">
-      <div class="page-header">
-        <h2>Produto</h2>
-      </div>
-      
-    </section>
-  </main>
-</div>
+<h2>Produto</h2>
 
 <style>
   :global(body) {
