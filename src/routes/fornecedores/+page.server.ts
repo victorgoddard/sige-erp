@@ -1,8 +1,7 @@
 import type { PageServerLoad } from "./$types";
 import { db } from "$lib/server/db";
 import { count, like, or } from "drizzle-orm";
-import { supplierTable, type NewSupplierType } from "$lib/server/db/tables/supplier";
-import { fail } from "assert";
+import { supplierTable } from "$lib/server/db/tables/supplier";
 
 export const load = (async ({ depends, locals, url }) => {
   depends("getSupplier");
@@ -39,35 +38,3 @@ export const load = (async ({ depends, locals, url }) => {
     variavelYagoTeste: "Testes",
   };
 }) satisfies PageServerLoad;
-
-export const actions = {
-  default: async ({ request, locals }) => {
-    const formData = await request.formData();
-    const name = formData.get("name")?.toString() ?? "";
-
-    const errors: Record<string, string> = {};
-
-    if (!name || name.length < 4) errors.name = "Nome inválido";
-
-    if (Object.keys(errors).length > 0) {
-      return { success: false, errors };
-    }
-
-    try {
-      let insertedNewSupplier: NewSupplierType = {
-        name,
-        idUser : 1,
-        createdAt: new Date(),
-      };
-      console.log(insertedNewSupplier);
-      await db.insert(supplierTable).values(insertedNewSupplier);
-      return { success: true };
-    } catch (e) {
-      console.log(e);
-      return fail(400, {
-        success: false,
-        exception: "Ocorreu uma exceção não tratada, favor contatar o suporte.",
-      });
-    }
-  },
-};
