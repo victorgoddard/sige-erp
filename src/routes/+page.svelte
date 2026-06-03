@@ -37,47 +37,15 @@
 </svelte:head>
 
 <div class="layout">
-  <aside class="sidebar">
-    <div class="company-section">
-      <div class="company-avatar">A</div>
-
-      <span>Andar 1001</span>
-    </div>
-
-    <nav class="menu">
-      {#each menuItems as item}
-        {@const Icon = item.icon}
-        <a
-          class="menu-item"
-          href={item.href}
-        >
-          <Icon size={22} />
-
-          <span>{item.label}</span>
-        </a>
-      {/each}
-    </nav>
-  </aside>
 
   <main class="content">
-    <header class="topbar">
-      <div class="topbar-overlay"></div>
-
-      <div class="topbar-content">
-
-        <div class="user-area">
-          <div class="avatar">J</div>
-
-          <span>João Cardoso</span>
-        </div>
-      </div>
-    </header>
 
     <section class="page-content">
       <div class="form-card">
         <HomeViewContent />
       </div>
     </section>
+    
   </main>
 </div>
 

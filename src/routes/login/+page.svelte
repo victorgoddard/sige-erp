@@ -8,34 +8,6 @@
   } from '@lucide/svelte';
 
   import { page } from '$app/stores';
-
-  const menuItems = [
-    {
-      label: 'Produto',
-      icon: Package,
-      href: '/#'
-    },
-    {
-      label: 'Fornecedores',
-      icon: Users,
-      href: '/#'
-    },
-    {
-      label: 'Ordens de Compra',
-      icon: FileText,
-      href: '/#'
-    },
-    {
-      label: 'Fluxo de Caixa',
-      icon: Wallet,
-      href: '/#'
-    },
-    {
-      label: 'Relatórios',
-      icon: PieChart,
-      href: '/#'
-    }
-  ];
   
 </script>
 
@@ -46,17 +18,8 @@
 <div class="layout">
 
   <main class="content">
-    <header class="topbar">
-      <div class="topbar-overlay"></div>
-
-      <div class="topbar-content"></div>
-    </header>
-
+  
     <section class="page-content">
-      <!--<div class="page-header">
-        <h2>Login</h2>
-      </div>-->
-
       <!--Login card-->
       <div class="total-card login-card">
   <div class="login-card-header">
@@ -64,21 +27,25 @@
     <p>Entre com suas credenciais para continuar</p>
   </div>
 
-  <div class="login-form">
+  <form method="POST" action="?/login" class="login-form">
     <label class="login-field" for="email">
       <span>E-mail</span>
-      <input id="email" type="email" placeholder="Digite seu e-mail" />
+      <input id="email" type="email" name="email" placeholder="Digite seu e-mail" />
     </label>
 
     <label class="login-field" for="password">
       <span>Senha</span>
-      <input id="password" type="password" placeholder="Digite sua senha" />
+      <input id="password" type="password" name="password" placeholder="Digite sua senha" />
     </label>
 
-    <button class="login-button" type="button">
+    <div class="create-account">
+      <a href="/cadastro">Criar conta</a>
+    </div>
+
+    <button class="login-button" type="submit">
       Entrar
     </button>
-  </div>
+  </form>
 </div>
 
     </section>
@@ -352,4 +319,24 @@
 .login-button:active {
   transform: translateY(0);
 }
+
+.create-account {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -0.4rem;
+}
+
+.create-account a {
+  font-size: 0.9rem;
+  color: #008f8d;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.create-account a:hover {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
 </style>
