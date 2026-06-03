@@ -54,7 +54,9 @@
 </script>
 
 <!-- {#if shellRoutes.has($page.url.pathname)} -->
+ {#if !data.hideShell}
   <div class="layout">
+  
     <header class="topbar">
       <h1>{currentTitle($page.url.pathname)}</h1>
 
@@ -102,6 +104,18 @@
       </main>
     </div>
   </div>
+      {:else}
+  <div class="layout">
+  
+    <header class="topbar">
+
+      <div class="topbar-cut"></div>
+
+    </header>
+
+    {@render children?.()}
+  </div>
+{/if}
 <!-- {:else}
   {@render children?.()}
 {/if} -->

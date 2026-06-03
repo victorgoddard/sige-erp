@@ -3,6 +3,7 @@
 
   import { page } from "$app/stores";
   let { form } = $props();
+
 </script>
 
 <svelte:head>
