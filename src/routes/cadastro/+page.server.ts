@@ -41,7 +41,7 @@ function verifyPassword(
 }
 
 export const actions: Actions = {
-  create: async ({request}) => {
+  create: async ({ request }) => {
     const formData = await request.formData();
 
     const email = formData.get("email")?.toString().trim();
@@ -148,7 +148,7 @@ export const actions: Actions = {
     throw redirect(303, "/login");
   },
 
-  update: async ({request}) => {
+  update: async ({ request }) => {
     const formData = await request.formData();
 
     const userId = formData.get("id")?.toString();
@@ -234,7 +234,7 @@ export const actions: Actions = {
     }
   },
 
-  delete: async ({request}) => {
+  delete: async ({ request }) => {
     const formData = await request.formData();
 
     const id = parseInt(

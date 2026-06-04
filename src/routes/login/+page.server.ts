@@ -86,7 +86,10 @@ export const actions: Actions = {
         });
       }
 
-      cookies.set("user_name", user[0].name, {
+      cookies.set("session", JSON.stringify({
+        userId: user[0].id || 0,
+        userName: user[0].name || "Usuario"
+      }), {
         path: "/",
         httpOnly: true,
         sameSite: "strict",

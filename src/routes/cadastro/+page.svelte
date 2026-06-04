@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   let { form } = $props();
-  
+  let showPassword = false; //implementação futura
 </script>
 
 <svelte:head>
@@ -50,7 +50,7 @@
             <span>Senha</span>
             <input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Digite sua senha"
               value={form?.password ?? ""}
@@ -61,7 +61,7 @@
             <span>Confirmar senha</span>
             <input
               id="confirmPassword"
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="confirmPassword"
               placeholder="Digite novamente sua senha"
               value={form?.passwordConfirm ?? ""}
@@ -200,11 +200,11 @@
   }
 
   .error-message {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
 </style>
