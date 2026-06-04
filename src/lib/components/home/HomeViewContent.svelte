@@ -34,9 +34,4 @@
     font-family: Inter, sans-serif;
   }
 
-  .icon {
-    display: block;
-    color: #9ca3af;
-    margin: 0 auto 0.5rem auto;
-  }
 </style>
