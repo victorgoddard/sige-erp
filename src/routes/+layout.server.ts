@@ -1,6 +1,7 @@
 import { redirect } from "@sveltejs/kit";
+import type { LayoutServerLoad } from "./$types";
 
-export async function load({ cookies, url }) {
+export const load = (async ({ cookies, url }) => {
     const noShellRoutes = new Set(["/login", "/cadastro"]);
 
     const cookie = cookies.get("session");
@@ -26,4 +27,4 @@ export async function load({ cookies, url }) {
         userId: session?.userId ?? 0,
         hideShell: noShellRoutes.has(url.pathname),
     };
-}
+}) satisfies LayoutServerLoad;

@@ -1,17 +1,21 @@
-export type PurchaseOrderStatus = 'PENDENTE' | 'APROVADA' | 'RECEBIDA';
+import type { StatusType } from "$lib/enums/orderStatus";
+
+export type PurchaseOrderStatus = StatusType;
 
 export interface Supplier {
-  id: string;
+  id: number;
   name: string;
 }
 
 export interface Product {
-  id: string;
+  id: number;
   name: string;
+  price: number;
+  quantity: number;
 }
 
 export interface PurchaseOrder {
-  id: string;
+  id: number;
   orderNumber: string;
   date: string;
   supplier: Supplier;
@@ -19,5 +23,5 @@ export interface PurchaseOrder {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
-  status: PurchaseOrderStatus;
+  status: StatusType;
 }

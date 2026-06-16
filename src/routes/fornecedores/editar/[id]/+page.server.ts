@@ -1,4 +1,4 @@
-import type { PageServerLoad } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
 import { db } from "$lib/server/db";
 import { supplierTable } from "$lib/server/db/tables/supplier";
 import { validateSupplierForm } from "$lib/server/validators/supplier";
@@ -62,4 +62,4 @@ export const actions = {
       });
     }
   },
-};
+} satisfies Actions;

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { Product, Supplier } from '$lib/types/purchase-order';
-
   let supplierName = $state('');
   let supplierCnpj = $state('');
   let supplierPhone = $state('');
@@ -114,7 +112,6 @@
     color: #1f2937;
   }
 
-  select,
   input {
     height: 54px;
     border-radius: 12px;
@@ -125,7 +122,6 @@
     background: white;
   }
 
-  select:focus,
   input:focus {
     border-color: #00b4b6;
   }

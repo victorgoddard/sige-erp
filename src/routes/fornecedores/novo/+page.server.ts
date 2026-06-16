@@ -2,6 +2,7 @@ import { db } from "$lib/server/db";
 import { supplierTable, type NewSupplierType } from "$lib/server/db/tables/supplier";
 import { validateSupplierForm } from "$lib/server/validators/supplier";
 import { fail } from "@sveltejs/kit";
+import type { Actions } from "./$types";
 
 export const actions = {
   default: async ({ request }) => {
@@ -30,4 +31,4 @@ export const actions = {
       });
     }
   },
-};
+} satisfies Actions;

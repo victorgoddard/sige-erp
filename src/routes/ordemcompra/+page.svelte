@@ -1,78 +1,9 @@
 <script lang="ts">
-  import {
-    Package,
-    Users,
-    FileText,
-    PieChart,
-    Wallet
-  } from '@lucide/svelte';
-
-  import { page } from '$app/stores';
-
   import PurchaseOrderForm from '$lib/components/form/PurchaseOrderForm.svelte';
   import PurchaseOrdersTable from '$lib/components/purchase-orders/PurchaseOrdersTable.svelte';
+  import type { ActionData, PageData } from './$types';
 
-  import { purchaseOrders } from '$lib/mock/purchase-order';
-
-  import type { Product, Supplier } from '$lib/types/purchase-order';
-
-  const suppliers: Supplier[] = [
-    {
-      id: '1',
-      name: 'Vogel Tecnologia'
-    },
-    {
-      id: '2',
-      name: 'Constrular Materiais'
-    },
-    {
-      id: '3',
-      name: 'EletroMais'
-    }
-  ];
-
-  const products: Product[] = [
-    {
-      id: '1',
-      name: 'Parafuso 4x40'
-    },
-    {
-      id: '2',
-      name: 'Bucha 6mm'
-    },
-    {
-      id: '3',
-      name: 'Cabo Flexível 2,5mm'
-    }
-  ];
-
-  const menuItems = [
-    {
-      label: 'Produto',
-      icon: Package,
-      href: '/product'
-    },
-    {
-      label: 'Fornecedores',
-      icon: Users,
-      href: '/suppliers'
-    },
-    {
-      label: 'Ordens de Compra',
-      icon: FileText,
-      href: '/purchase-orders'
-    },
-    {
-      label: 'Fluxo de Caixa',
-      icon: Wallet,
-      href: '/cash-flow'
-    },
-    {
-      label: 'Relatórios',
-      icon: PieChart,
-      href: '/charts'
-    }
-  ];
+  let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
 
 <svelte:head>
@@ -84,15 +15,24 @@
     <h2>Ordens de Compra</h2>
   </div>
 
+  {#if form?.error}
+    <div class="feedback error">
+      {form.error}
+    </div>
+  {/if}
+
   <div class="form-card">
     <PurchaseOrderForm
-      {suppliers}
-      {products}
+      suppliers={data.suppliers}
+      products={data.products}
     />
   </div>
 
   <PurchaseOrdersTable
-    orders={purchaseOrders}
+    orders={data.orders}
+    suppliers={data.suppliers}
+    products={data.products}
+    statuses={data.statuses}
   />
 </section>
 
@@ -101,127 +41,6 @@
     margin: 0;
     background: #f5f6fa;
     font-family: Inter, sans-serif;
-  }
-
-  .layout {
-    display: flex;
-    min-height: 100vh;
-  }
-
-  .sidebar {
-    width: 260px;
-    background: linear-gradient(180deg, #071826 0%, #03111d 100%);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    border-right: 4px solid #00b4b6;
-  }
-
-  .company-section {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 2rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .company-avatar,
-  .avatar {
-    width: 54px;
-    height: 54px;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.15);
-    font-weight: 700;
-    font-size: 1.1rem;
-    border: 2px solid rgba(255, 255, 255, 0.35);
-  }
-
-  .company-section span {
-    font-size: 1.35rem;
-    font-weight: 500;
-  }
-
-  .menu {
-    display: flex;
-    flex-direction: column;
-    padding: 2rem 0;
-  }
-
-  .menu-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    height: 60px;
-    padding: 0 2rem;
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.82);
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.2s;
-
-    text-decoration: none;
-  }
-
-  .menu-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-  }
-
-  .menu-item.active {
-    color: #00d2d3;
-    background: rgba(0, 210, 211, 0.08);
-  }
-
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .topbar {
-    position: relative;
-    height: 96px;
-    background: linear-gradient(90deg, #041420 0%, #071f32 45%, #00b4b6 100%);
-    overflow: hidden;
-  }
-
-  .topbar-overlay {
-    position: absolute;
-    right: 22%;
-    top: -40px;
-    width: 320px;
-    height: 180px;
-    background: rgba(255, 255, 255, 0.08);
-    transform: rotate(35deg);
-  }
-
-  .topbar-content {
-    position: relative;
-    z-index: 2;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-  }
-
-  .topbar h1 {
-    color: white;
-    font-size: 2.2rem;
-    margin: 0;
-    font-weight: 700;
-  }
-
-  .user-area {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 500;
   }
 
   .page-content {
@@ -239,20 +58,25 @@
 
   .form-card {
     background: white;
-    border-radius: 18px;
+    border-radius: 8px;
     border: 1px solid #e5e7eb;
     padding: 2rem;
   }
 
-  @media (max-width: 1200px) {
-    .layout {
-      flex-direction: column;
-    }
+  .feedback {
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-weight: 700;
+  }
 
-    .sidebar {
-      width: 100%;
-      border-right: none;
-      border-bottom: 4px solid #00b4b6;
+  .error {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+
+  @media (max-width: 760px) {
+    .page-content {
+      padding: 1rem;
     }
   }
 </style>

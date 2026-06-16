@@ -1,17 +1,20 @@
 <script lang="ts">
-  import type { PurchaseOrderStatus } from '$lib/types/purchase-order';
+  import { Status, type StatusType } from '$lib/enums/orderStatus';
 
-  let { status }: { status: PurchaseOrderStatus } = $props();
+  let { status }: { status: StatusType } = $props();
 
-  const variants: Record<PurchaseOrderStatus, { label: string; className: string }> = {
-    PENDENTE: { label: 'Pendente', className: 'pending' },
-    APROVADA: { label: 'Aprovada', className: 'approved' },
-    RECEBIDA: { label: 'Recebida', className: 'received' }
+  const variants: Record<StatusType, { label: string; className: string }> = {
+    [Status.Pending]: { label: Status.Pending, className: 'pending' },
+    [Status.Processing]: { label: Status.Processing, className: 'processing' },
+    [Status.AwaitingAproval]: { label: Status.AwaitingAproval, className: 'awaiting' },
+    [Status.Approved]: { label: Status.Approved, className: 'approved' }
   };
+
+  let variant = $derived(variants[status] ?? { label: status, className: 'neutral' });
 </script>
 
-<span class={`badge ${variants[status].className}`}>
-  {variants[status].label}
+<span class={`badge ${variant.className}`}>
+  {variant.label}
 </span>
 
 <style>
@@ -19,25 +22,37 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 110px;
-    padding: 0.65rem 1rem;
-    border-radius: 10px;
-    font-size: 0.875rem;
-    font-weight: 600;
+    min-width: 112px;
+    padding: 0.55rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
   }
 
   .pending {
-    background: #fff1d6;
-    color: #b7791f;
+    background: #fff7ed;
+    color: #c2410c;
+  }
+
+  .processing {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+
+  .awaiting {
+    background: #fef9c3;
+    color: #a16207;
   }
 
   .approved {
-    background: #dbeafe;
-    color: #2563eb;
-  }
-
-  .received {
     background: #dcfce7;
     color: #15803d;
+  }
+
+  .neutral {
+    background: #f3f4f6;
+    color: #4b5563;
   }
 </style>
