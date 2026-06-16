@@ -1,20 +1,18 @@
 <script lang="ts">
-  import { Status, type StatusType } from '$lib/enums/orderStatus';
+  import type { PurchaseOrderStatus } from '$lib/types/purchase-order';
 
-  let { status }: { status: StatusType } = $props();
-
-  const variants: Record<StatusType, { label: string; className: string }> = {
-    [Status.Pending]: { label: Status.Pending, className: 'pending' },
-    [Status.Processing]: { label: Status.Processing, className: 'processing' },
-    [Status.AwaitingAproval]: { label: Status.AwaitingAproval, className: 'awaiting' },
-    [Status.Approved]: { label: Status.Approved, className: 'approved' }
+  let { status }: { status: PurchaseOrderStatus } = $props();
+  
+  const variants: Record<PurchaseOrderStatus, { label: string; className: string }> = {
+    Pendente: { label: 'Pendente', className: 'pending' },
+    Processando: { label: 'Em Processamento', className: 'processing' },
+    "Aguardando aprovação": { label: 'Aguardando Aprovação', className: 'awaitingApproval' },
+    Aprovado: { label: 'Aprovada', className: 'approved' }
   };
-
-  let variant = $derived(variants[status] ?? { label: status, className: 'neutral' });
 </script>
 
-<span class={`badge ${variant.className}`}>
-  {variant.label}
+<span class={`badge ${variants[status].className}`}>
+  {variants[status].label}
 </span>
 
 <style>
@@ -22,37 +20,25 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 112px;
-    padding: 0.55rem 0.8rem;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    line-height: 1;
-    white-space: nowrap;
+    min-width: 110px;
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
   }
 
   .pending {
-    background: #fff7ed;
-    color: #c2410c;
-  }
-
-  .processing {
-    background: #e0f2fe;
-    color: #0369a1;
-  }
-
-  .awaiting {
-    background: #fef9c3;
-    color: #a16207;
+    background: #fff1d6;
+    color: #b7791f;
   }
 
   .approved {
-    background: #dcfce7;
-    color: #15803d;
+    background: #dbeafe;
+    color: #2563eb;
   }
 
-  .neutral {
-    background: #f3f4f6;
-    color: #4b5563;
+  .received {
+    background: #dcfce7;
+    color: #15803d;
   }
 </style>
