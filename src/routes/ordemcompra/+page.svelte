@@ -1,7 +1,6 @@
 <script lang="ts">
-  import PurchaseOrderForm from '$lib/components/form/PurchaseOrderForm.svelte';
-  import PurchaseOrdersTable from '$lib/components/purchase-orders/PurchaseOrdersTable.svelte';
   import type { ActionData, PageData } from './$types';
+  import PurchaseOrdersTable from '$lib/components/purchase-orders/PurchaseOrdersTable.svelte';
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
@@ -12,20 +11,13 @@
 
 <section class="page-content">
   <div class="page-header">
-    <h2>Ordens de Compra</h2>
-  </div>
-
-  {#if form?.error}
-    <div class="feedback error">
-      {form.error}
+    <div class="flex justify-between items-center">
+      <h2>Ordens de Compra</h2>
+      <a href="/ordemcompra/novo" class="btn btn-success">
+        <span>+</span>
+        Nova
+      </a>
     </div>
-  {/if}
-
-  <div class="form-card">
-    <PurchaseOrderForm
-      suppliers={data.suppliers}
-      products={data.products}
-    />
   </div>
 
   <PurchaseOrdersTable
@@ -56,22 +48,10 @@
     font-size: 2rem;
   }
 
-  .form-card {
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    padding: 2rem;
-  }
-
-  .feedback {
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
-    font-weight: 700;
-  }
-
-  .error {
-    background: #fee2e2;
-    color: #b91c1c;
+  .page-header div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   @media (max-width: 760px) {

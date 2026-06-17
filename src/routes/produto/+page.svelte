@@ -1,27 +1,27 @@
 <script lang="ts">
   import {
-    Package,
-    Users,
-    FileText,
-    PieChart,
-    Wallet,
     Plus,
     Edit,
     Trash2,
-    X,
     ChevronUp,
     ChevronDown
   } from '@lucide/svelte';
   
   import { enhance } from '$app/forms';
-  import type { PageData, ActionData } from './$types';
+  import type { ActionData } from './$types';
+  import { showToast } from '$lib/components/toast/toastStore';
 
-  let { data, form }: { data: PageData; form: ActionData } = $props();
+  interface Product {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+    minimumStockQuantity: number;
+    fornecedorId: number | null;
+    supplierName: string | null;
+  }
 
-  let editId = $state<number | null>(null);
-  let inputName = $state('');
-  let inputPrice = $state<number | string>('');
-  let inputQuantity = $state<number | string>('');
+  let { data, form }: { data: { products: Product[] }; form: ActionData } = $props();
 
   let sortColumn = $state<string | null>(null);
   let sortDirection = $state<'asc' | 'desc'>('asc');
@@ -55,21 +55,6 @@
     }
   }
 
-  function handleEdit(product: any) {
-    editId = product.id;
-    inputName = product.name;
-    inputPrice = product.price;
-    inputQuantity = product.quantity;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function cancelEdit() {
-    editId = null;
-    inputName = '';
-    inputPrice = '';
-    inputQuantity = '';
-  }
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -84,86 +69,13 @@
 
 <section class="page-content">
   <div class="page-header">
-    <h2>Produtos</h2>
-  </div>
-
-  {#if form?.error}
-    <div style="color: #dc2626; background: #fee2e2; padding: 1rem; border-radius: 8px;">
-      {form.error}
+    <div class="flex justify-between items-center">
+      <h2>Produtos</h2>
+      <a href="/produto/novo" class="btn btn-success">
+        <Plus size={20} />
+        Novo
+      </a>
     </div>
-  {/if}
-
-  <div class="form-card dark-card">
-    <form 
-      method="POST" 
-      action={editId ? '?/update' : '?/create'} 
-      use:enhance={() => {
-        return async ({ result, update }) => {
-          if (result.type === 'success') cancelEdit();
-          update();
-        };
-      }}
-      class="add-product-form"
-    >
-      {#if editId}
-        <input type="hidden" name="id" value={editId} />
-      {/if}
-      
-      <div class="input-group">
-        <label for="productName">Nome do Produto</label>
-        <input
-          type="text"
-          id="productName"
-          name="name" 
-          bind:value={inputName}
-          placeholder="Ex: Cabo Flexível"
-          class="form-input dark-input"
-          required
-        />
-      </div>
-
-      <div class="input-group">
-        <label for="productPrice">Preço Unitário</label>
-        <input
-          type="number"
-          id="productPrice"
-          name="price"
-          bind:value={inputPrice}
-          placeholder="R$ 0,00"
-          step="any"
-          min="0"
-          class="form-input dark-input"
-          required
-        />
-      </div>
-
-      <div class="input-group">
-        <label for="productQuantity">Quantidade</label>
-        <input
-          type="number"
-          id="productQuantity"
-          name="quantity"
-          bind:value={inputQuantity}
-          placeholder="Ex: 100"
-          min="0"
-          class="form-input dark-input"
-          required
-        />
-      </div>
-
-      <div style="display: flex; gap: 0.5rem; height: 46px;">
-        <button type="submit" class="btn-primary">
-          <Plus size={20} />
-          {editId ? 'Atualizar' : 'Adicionar'}
-        </button>
-
-        {#if editId}
-          <button type="button" class="btn-primary" style="background: #ef4444;" onclick={cancelEdit}>
-            <X size={20} />
-          </button>
-        {/if}
-      </div>
-    </form>
   </div>
 
   <div class="grid-card">
@@ -202,6 +114,22 @@
               {/if}
             </div>
           </th>
+          <th class="sortable" onclick={() => handleSort('minimumStockQuantity')}>
+            <div class="th-content">
+              Estoque Mínimo
+              {#if sortColumn === 'minimumStockQuantity'}
+                {#if sortDirection === 'asc'}<ChevronUp size={14} />{:else}<ChevronDown size={14} />{/if}
+              {/if}
+            </div>
+          </th>
+          <th class="sortable" onclick={() => handleSort('supplier')}>
+            <div class="th-content">
+              Fornecedor
+              {#if sortColumn === 'supplier'}
+                {#if sortDirection === 'asc'}<ChevronUp size={14} />{:else}<ChevronDown size={14} />{/if}
+              {/if}
+            </div>
+          </th>
           <th class="actions-col">Ações</th>
         </tr>
       </thead>
@@ -212,13 +140,21 @@
             <td class="name-col">{product.name}</td>
             <td class="price-col">{formatCurrency(product.price)}</td>
             <td class="quantity-col">{product.quantity} un.</td>
+            <td class="quantity-col">{product.minimumStockQuantity} un.</td>
+            <td class="supplier-col">{product.supplierName || '-'}</td>
             <td class="actions-col" style="display: flex; justify-content: flex-end; gap: 0.5rem;">
               
-              <button type="button" class="btn-icon edit" aria-label="Editar produto" onclick={() => handleEdit(product)}>
+              <a href="/produto/editar/{product.id}" class="btn-icon edit" aria-label="Editar produto">
                 <Edit size={18} />
-              </button>
+              </a>
 
-              <form method="POST" action="?/delete" use:enhance>
+              <form method="POST" action="?/delete" use:enhance={() => {
+                return async ({ result }) => {
+                  if (result.type === 'success') {
+                    showToast('Produto deletado com sucesso!', 'success');
+                  }
+                };
+              }}>
                 <input type="hidden" name="id" value={product.id} />
                 <button type="submit" class="btn-icon delete" aria-label="Excluir produto">
                   <Trash2 size={18} />
@@ -229,7 +165,7 @@
           </tr>
         {:else}
           <tr>
-            <td colspan="5" class="empty-state">Nenhum produto cadastrado no banco de dados.</td>
+            <td colspan="7" class="empty-state">Nenhum produto cadastrado no banco de dados.</td>
           </tr>
         {/each}
       </tbody>
@@ -251,84 +187,10 @@
     gap: 2rem;
   }
 
-  .page-header h2 {
-    margin: 0;
-    color: #1f2937;
-    font-size: 2rem;
-  }
-
-  .dark-card {
-    background: linear-gradient(180deg, #071826 0%, #03111d 100%);
-    border-radius: 18px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  }
-
-  .add-product-form {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr auto;
-    gap: 1.5rem;
-    align-items: flex-end;
-  }
-
-  .input-group {
+  .page-header div {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .input-group label {
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 0.9rem;
-    letter-spacing: 0.02em;
-  }
-
-  .dark-input {
-    padding: 0.75rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-    font-size: 1rem;
-    outline: none;
-    transition: all 0.2s;
-    background-color: rgba(255, 255, 255, 0.04);
-    color: white;
-  }
-
-  .dark-input::placeholder {
-    color: rgba(255, 255, 255, 0.3);
-  }
-
-  .dark-input:focus {
-    border-color: #00b4b6;
-    background-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 3px rgba(0, 180, 182, 0.2);
-  }
-
-  .btn-primary {
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
-    background: #00b4b6;
-    color: white;
-    padding: 0 1.5rem;
-    height: 46px;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    white-space: nowrap;
-  }
-
-  .btn-primary:hover {
-    background: #00d2d3;
-  }
-  
-  .btn-primary:active {
-    transform: translateY(1px);
   }
 
   .grid-card {
@@ -431,26 +293,7 @@
     padding: 3rem !important;
   }
 
-  @media (max-width: 1024px) {
-    .add-product-form {
-      grid-template-columns: 1fr 1fr;
-    }
-    
-    .btn-primary {
-      grid-column: span 2;
-      justify-content: center;
-    }
-  }
-
   @media (max-width: 640px) {
-    .add-product-form {
-      grid-template-columns: 1fr;
-    }
-    
-    .btn-primary {
-      grid-column: span 1;
-    }
-    
     .data-table th, .data-table td {
       padding: 1rem;
     }

@@ -91,7 +91,7 @@
             </tr>
           {:else }
             {#each suppliers as supplier}
-              <tr>
+              <tr class:inactive={!supplier.active}>
                 <td>{supplier.name}</td>
                 <td>{supplier.telefone}</td>
                 <td>{supplier.condicaoPagamento}</td>
@@ -127,3 +127,10 @@
   {/if}
   
 </div>
+
+<style>
+  :global(tr.inactive) {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+</style>

@@ -1,0 +1,1 @@
+ALTER TABLE `product` ADD `minimumStockQuantity` integer NOT NULL DEFAULT 0;

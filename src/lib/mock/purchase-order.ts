@@ -38,6 +38,6 @@ export const purchaseOrders: PurchaseOrder[] = [
     quantity: 100,
     unitPrice: 0.15,
     totalPrice: 15,
-    status: Status.Approved
+    status: Status.Paid
   }
 ];

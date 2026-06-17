@@ -47,6 +47,7 @@ export const actions = {
         .update(supplierTable)
         .set({
           name: values.name,
+          active: values.active,
           telefone: values.telefone,
           condicaoPagamento: values.condicaoPagamento,
           updatedAt: new Date(),

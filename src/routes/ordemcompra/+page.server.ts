@@ -164,60 +164,6 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-  create: async ({ request, cookies }) => {
-    const formData = await request.formData();
-
-    const supplierId = parseRequiredId(formData.get("supplierId"));
-    const productId = parseRequiredId(formData.get("productId"));
-    const quantity = parseQuantity(formData.get("quantity"));
-
-    if (!supplierId) {
-      return fail(400, { success: false, error: "Selecione um fornecedor." });
-    }
-
-    if (!productId) {
-      return fail(400, { success: false, error: "Selecione um produto." });
-    }
-
-    if (!quantity) {
-      return fail(400, { success: false, error: "Informe uma quantidade valida." });
-    }
-
-    try {
-      const [supplier, product] = await Promise.all([
-        findSupplier(supplierId),
-        findProduct(productId)
-      ]);
-
-      if (!supplier) {
-        return fail(404, { success: false, error: "Fornecedor nao encontrado." });
-      }
-
-      if (!product) {
-        return fail(404, { success: false, error: "Produto nao encontrado." });
-      }
-
-      const unitPrice = product.price;
-      const totalPrice = unitPrice * quantity;
-
-      await db.insert(purchaseOrderTable).values({
-        date: new Date(),
-        supplierId,
-        productId,
-        quantity,
-        unitPrice,
-        totalPrice,
-        status: Status.Pending,
-        idUser: readUserId(cookies)
-      });
-
-      return { success: true };
-    } catch (error) {
-      console.error(error);
-      return fail(500, { success: false, error: "Erro interno ao criar ordem de compra." });
-    }
-  },
-
   update: async ({ request }) => {
     const formData = await request.formData();
 

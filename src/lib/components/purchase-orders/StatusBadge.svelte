@@ -7,7 +7,8 @@
     Pendente: { label: 'Pendente', className: 'pending' },
     Processando: { label: 'Em Processamento', className: 'processing' },
     "Aguardando aprovação": { label: 'Aguardando Aprovação', className: 'awaitingApproval' },
-    Aprovado: { label: 'Aprovada', className: 'approved' }
+    Aprovado: { label: 'Aprovada', className: 'approved' },
+    Pago: { label: 'Pago', className: 'paid' }
   };
 </script>
 
@@ -35,6 +36,11 @@
   .approved {
     background: #dbeafe;
     color: #2563eb;
+  }
+
+  .paid {
+    background: #dcfce7;
+    color: #15803d;
   }
 
   .received {

@@ -36,6 +36,20 @@
       "when": 1781578468749,
       "tag": "0004_create-purchase-order-table",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1781656382003,
+      "tag": "0005_tense_captain_marvel",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1781659000000,
+      "tag": "0006_add-minimum-stock-quantity",
+      "breakpoints": true
     }
   ]
 }

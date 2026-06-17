@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PageProps } from "./$types";
   import { applyAction, enhance } from "$app/forms";
-  import { invalidateAll } from "$app/navigation";
+  import { goto } from "$app/navigation";
   import Breadcrumbs from "$lib/components/Breadcrumbs.svelte";
   import { showToast } from "$lib/components/toast/toastStore";
 
@@ -37,7 +37,7 @@
 
         if (result.status === 200) {
           showToast("Fornecedor atualizado com sucesso!", "success");
-          await invalidateAll();
+          await goto("/fornecedores");
         } else {
           await applyAction(result);
 
@@ -128,6 +128,18 @@
       {#if errors?.condicaoPagamento}
         <span class="text-error text-sm">{errors.condicaoPagamento}</span>
       {/if}
+    </div>
+
+    <div class="w-full md:w-3/12 pr-5 flex flex-col">
+      <label for="active" class="label">
+        <span class="label-text">Ativo</span>
+      </label>
+      <input
+        type="checkbox"
+        name="active"
+        class="checkbox checkbox-success"
+        checked={supplier.active}
+      />
     </div>
 
     <div class="w-full flex justify-end mt-5 pr-5">
