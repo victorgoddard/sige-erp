@@ -1,42 +1,13 @@
-# sv
+# INTEGRAÇÃO DOS MÓDULOS DE COMPRAS, ESTOQUE E FINANCEIRO EM SISTEMAS ERP PARA GERAÇÃO DE DADOS GERENCIAIS: UM ESTUDO SOBRE IMPLANTAÇÃO E EVOLUÇÃO EM EMPRESAS EM CRESCIMENTO
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+- Daniel Vitor Salviano Araújo
+- Felipe Fernandes de Bellis Ruas
+- Gustavo Augusto Santos Perdigão
+- Matheus Henrique Marques Canuto
+- Victor Goddard Araujo Silva
+- Yago de Arruda Simões
 
-## Creating a project
+A integração entre os módulos de compras, estoque e financeiro em sistemas ERP constitui um fator determinante para a qualidade das informações gerenciais e para o apoio à tomada de decisão nas organizações. Apesar dos benefícios amplamente reconhecidos na literatura, muitas empresas ainda operam com processos desintegrados, o que gera inconsistências entre dados físicos e financeiros, retrabalho e limitações na geração de relatórios consolidados. Este trabalho tem como objetivo desenvolver um sistema web simplificado que integre os três módulos mencionados, garantindo que uma ação realizada em um módulo impacte diretamente os demais, e analisar como essa integração contribui para a melhoria da qualidade das informações nas empresas. A solução foi desenvolvida com JavaScript, TypeScript, o framework Svelte/SvelteKit e banco de dados relacional SQLite, com acesso via Drizzle ORM. O sistema atende a requisitos funcionais como cadastro de fornecedores e produtos, criação de ordens de compra, registro de movimentações no estoque, geração de compromissos financeiros e exibição de painel gerencial unificado. Os resultados indicam que a integração proposta viabiliza maior consistência e rastreabilidade das informações, reduzindo divergências operacionais e oferecendo uma base mais confiável para decisões gerenciais.
 
-If you're seeing this, you've probably already done this step. Congrats!
+Palavras-Chave: ERP; Integração de módulos; Gestão de compras; Controle de estoque; Sistemas de informação gerencial.
 
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-pnpm dlx sv@0.15.1 create --template minimal --types ts --add tailwindcss="plugins:none" sveltekit-adapter="adapter:vercel" drizzle="database:sqlite+sqlite:turso" better-auth="demo:password" --install pnpm .
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
